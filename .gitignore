@@ -1,0 +1,13 @@
+hw2_code/*.csv
+hw2_code/kmeans.*
+hw2_code/kmeans/*
+hw2_code/downsampled_videos/*
+hw2_code/new_downsampled_videos/*
+hw2_code/surf/*
+hw2_code/cnn/*
+hw2_code/scripts/bak/*
+hw2_code/scripts/select.cnn.csv
+hw2_code/scripts/select.surf.csv
+hw2_code/.ipynb_checkpoints
+hw2_code/.ipynb_checkpoints/*
+

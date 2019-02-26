@@ -43,15 +43,22 @@ if [ "$PREPROCESSING" = true ] ; then
     # 1. Downsample videos into shorter clips with lower frame rates.
     # TODO: Make this more efficient through multi-threading f.ex.
     start=`date +%s`
-    for line in $(cat "list/all.video"); do
-        ffmpeg -y -ss 0 -i $video_path/${line}.mp4 -strict experimental -t $downsampling_frame_len -r $downsampling_frame_rate downsampled_videos/$line.ds.mp4
-    done
+    cat "list/all.video" | parallel -I {} 'export video_path=~/video; export downsampling_frame_rate=15; export downsampling_frame_len=60; if [ -f new_downsampled_videos/{}.ds.mp4 ]; then echo "Skipping {}"; else /usr/local/sbin/ffmpeg3.2/bin/ffmpeg -y -ss 0 -i $video_path/{}.mp4 -strict experimental -t $downsampling_frame_len -r $downsampling_frame_rate new_downsampled_videos/{}.ds.mp4; fi'
+    # for line in $(cat "list/all.video"); do
+	# if [ -f downsampled_videos/$line.ds.mp4 ]; then
+	# 	echo "Skipping $line"
+	# else
+    #     	ffmpeg -y -ss 0 -filter_threads 16 -i $video_path/${line}.mp4 -strict experimental -t $downsampling_frame_len -r $downsampling_frame_rate downsampled_videos/$line.ds.mp4
+	# fi
+    # done
     end=`date +%s`
     runtime=$((end-start))
     echo "Downsampling took: $runtime" #28417 sec around 8h without parallelization
 
+    exit 0
+
     # 2. TODO: Extract SURF features over keyframes of downsampled videos (0th, 5th, 10th frame, ...)
-    python surf_feat_extraction.py -i list/all.video config.yaml
+    python surf_feat_extraction.py list/all.video config.yaml
 
     # 3. TODO: Extract CNN features from keyframes of downsampled videos
 	
